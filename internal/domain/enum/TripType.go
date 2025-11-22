@@ -3,7 +3,7 @@ package enum
 type TripType int
 
 const (
-	Unknown TripType = iota
-	Air
-	Rail
+	TripUnknown TripType = iota
+	TripAir
+	TripRail
 )
