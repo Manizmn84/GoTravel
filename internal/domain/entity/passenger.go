@@ -15,5 +15,8 @@ type Passenger struct {
 	Password  string
 	Username  string
 	Email     string `gorm:"type:varchar(100);uniqueIndex"`
-	Sex       enum.Gender
+	Gender    enum.Gender
+
+	ReserveId int
+	Reserve   Reserve `gorm:"foreignKey:ReserveId"`
 }
