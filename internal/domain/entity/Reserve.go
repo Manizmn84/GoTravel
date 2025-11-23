@@ -11,6 +11,10 @@ type Reserve struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
+	Cost      int
+
+	PaymentId int
+	Payment   Payment `gorm:"foreignKey:PaymentId"`
 
 	Passengers []Passenger
 }
