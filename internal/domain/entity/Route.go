@@ -15,8 +15,8 @@ type Route struct {
 	Trips []Trip
 
 	FromAirportId int
-	FromAirport   Airport `gorm:"foreignKey:fromAirportId"`
+	FromAirport   Airport `gorm:"foreignKey:FromAirportId"`
 
 	ToAirportId int
-	ToAirport   Airport `gorm:"foreignKey:toAirport"`
+	ToAirport   Airport `gorm:"foreignKey:ToAirportId"`
 }
