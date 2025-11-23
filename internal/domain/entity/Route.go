@@ -3,7 +3,6 @@ package entity
 import (
 	"time"
 
-	"github.com/Manizmn84/GoTravel/internal/domain/enum"
 	"gorm.io/gorm"
 )
 
@@ -13,5 +12,11 @@ type Route struct {
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 
-	TransforType enum.TransforType
+	Trips []Trip
+
+	FromAirportId int
+	FromAirport   Airport `gorm:"foreignKey:fromAirportId"`
+
+	ToAirportId int
+	ToAirport   Airport `gorm:"foreignKey:toAirport"`
 }

@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Airline struct {
+type Company struct {
 	ID           uint `gorm:"primaryKey"`
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
@@ -14,4 +14,6 @@ type Airline struct {
 	Name         string
 	Country      string
 	SupportEmail string
+
+	Trips []Trip
 }

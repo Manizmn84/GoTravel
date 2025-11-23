@@ -14,4 +14,7 @@ type Airport struct {
 	Name      string
 	Country   string
 	City      string
+
+	StartingRoutes []Route `gorm:"foreignKey:FromAirportId"`
+	EndingRoutes   []Route `gorm:"foreignKey:ToAirportId"`
 }
