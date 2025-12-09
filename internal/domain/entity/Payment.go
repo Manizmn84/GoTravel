@@ -12,6 +12,13 @@ type Payment struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Amount    int64
-	Status    enum.PaymentStatus
+
+	Status    enum.PaymentStatus `gorm:"type:int"`
+	Method    enum.PaymentMethod `gorm:"type:int"`
+	ReserveId uint               `gorm:"type:uniqueIndex"`
+	Reserve   Reserve            `gorm:"foreignKey:ReserveId"`
+}
+
+func (Payment) TableName() string {
+	return "payments"
 }
