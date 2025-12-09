@@ -14,8 +14,8 @@ type Reserve struct {
 
 	TotalAmount float64 `gorm:"type:decimal(10,2)"`
 
-	PassengerId uint
-	Passenger   Passenger `gorm:"foreignKey:PassengerId"`
+	PassengerID uint
+	Passenger   Passenger `gorm:"foreignKey:PassengerID"`
 }
 
 func (Reserve) TableName() string {

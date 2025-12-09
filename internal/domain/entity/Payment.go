@@ -15,8 +15,8 @@ type Payment struct {
 
 	Status    enum.PaymentStatus `gorm:"type:int"`
 	Method    enum.PaymentMethod `gorm:"type:int"`
-	ReserveId uint               `gorm:"type:uniqueIndex"`
-	Reserve   Reserve            `gorm:"foreignKey:ReserveId"`
+	ReserveID uint               `gorm:"type:uniqueIndex"`
+	Reserve   Reserve            `gorm:"foreignKey:ReserveID"`
 }
 
 func (Payment) TableName() string {

@@ -12,8 +12,17 @@ type Seat struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Type      enum.SeatType
 
-	TripId int
+	Type   enum.SeatType
+	Number int
+
+	TripId uint `gorm:"unique"`
 	Trip   Trip `gorm:"foreignKey:TripId"`
+
+	ClassID   uint      `gorm:"unique"`
+	FareClass FareClass `gorm:"foreignKey:ClassID"`
+}
+
+func (Seat) TableName() string {
+	return "seats"
 }
