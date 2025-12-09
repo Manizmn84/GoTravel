@@ -11,9 +11,9 @@ type Admin struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Email     string         `gorm:"type:varchar(100);uniqueIndex"`
-	Phone     string
-	Password  string
-	Username  string
-	Name      string
+	Email     string         `gorm:"type:varchar(50);uniqueIndex"`
+	Phone     string         `gorm:"type:varchar(13)"`
+	Password  string         `gorm:"type:varchar(20)"`
+	Username  string         `gorm:"type:varchar(20)"`
+	Name      string         `gorm:"type:varchar(20)"`
 }
