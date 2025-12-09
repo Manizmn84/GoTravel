@@ -11,10 +11,13 @@ type Reserve struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Cost      int
 
-	PaymentId int
-	Payment   Payment `gorm:"foreignKey:PaymentId"`
+	TotalAmount float64 `gorm:"type:decimal(10,2)"`
 
-	Passengers []Passenger
+	PassengerId uint
+	Passenger   Passenger `gorm:"foreignKey:PassengerId"`
+}
+
+func (Reserve) TableName() string {
+	return "reserves"
 }

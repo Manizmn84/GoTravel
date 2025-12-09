@@ -21,9 +21,9 @@ type Passenger struct {
 	NationalCode string `gorm:"type:varchar(20)"`
 	Phone        string `gorm:"type:varchar(20)"`
 
-	Reserves []Reserve `gorm:"foreignKey:PassengerID"`
+	Reserves []Reserve `gorm:"foreignKey:PassengerId"`
 }
 
 func (Passenger) TableName() string {
-	return "Passengers"
+	return "passengers"
 }
