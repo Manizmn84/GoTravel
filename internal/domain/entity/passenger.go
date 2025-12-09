@@ -12,11 +12,18 @@ type Passenger struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Password  string
-	Username  string
-	Email     string `gorm:"type:varchar(100);uniqueIndex"`
-	Gender    enum.Gender
 
-	ReserveId int
-	Reserve   Reserve `gorm:"foreignKey:ReserveId"`
+	Email        string `gorm:"type:varchar(100);uniqueIndex;not null"`
+	FirstName    string `gorm:"type:varchar(20)"`
+	LastName     string `gorm:"type:varchar(20)"`
+	Gender       enum.Gender
+	Password     string `gorm:"type:varchar(255)"`
+	NationalCode string `gorm:"type:varchar(20)"`
+	Phone        string `gorm:"type:varchar(20)"`
+
+	Reserves []Reserve `gorm:"foreignKey:PassengerID"`
+}
+
+func (Passenger) TableName() string {
+	return "Passengers"
 }
