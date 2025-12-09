@@ -11,10 +11,12 @@ type Airport struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Name      string
-	Country   string
-	City      string
 
-	StartingRoutes []Route `gorm:"foreignKey:FromAirportId"`
-	EndingRoutes   []Route `gorm:"foreignKey:ToAirportId"`
+	Name      string `gorm:"type:varchar(20)"`
+	Country   string `gorm:"type:varchar(20)"`
+	City      string `gorm:"type:varchar(20)"`
+	LATA_Code string `gorm:"type:varchar(20)"`
+
+	FromRoutes []Route `gorm:"foreignKey:FromAirportID"`
+	ToRoutes   []Route `gorm:"foreignKey:ToAirportID"`
 }

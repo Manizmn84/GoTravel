@@ -12,11 +12,11 @@ type Route struct {
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 
-	Trips []Trip
+	Trips []Trip `gorm:"many2many:trip_routes"`
 
-	FromAirportId int
-	FromAirport   Airport `gorm:"foreignKey:FromAirportId"`
+	FromAirportID uint
+	FromAirport   Airport `gorm:"foreignKey:FromAirportID"`
 
-	ToAirportId int
-	ToAirport   Airport `gorm:"foreignKey:ToAirportId"`
+	ToAirportID uint
+	ToAirport   Airport `gorm:"foreignKey:ToAirportID"`
 }

@@ -16,8 +16,8 @@ type Seat struct {
 	Type   enum.SeatType
 	Number int
 
-	TripId uint `gorm:"unique"`
-	Trip   Trip `gorm:"foreignKey:TripId"`
+	TripID uint `gorm:"unique"`
+	Trip   Trip `gorm:"foreignKey:TripID"`
 
 	ClassID   uint      `gorm:"unique"`
 	FareClass FareClass `gorm:"foreignKey:ClassID"`
