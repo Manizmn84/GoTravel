@@ -1,17 +1,12 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/Manizmn84/GoTravel/internal/domain/enum"
-	"gorm.io/gorm"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/database"
 )
 
 type Passenger struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	database.Model
 
 	Email        string `gorm:"type:varchar(100);uniqueIndex;not null"`
 	FirstName    string `gorm:"type:varchar(20)"`

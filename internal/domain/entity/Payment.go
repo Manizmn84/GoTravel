@@ -1,17 +1,12 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/Manizmn84/GoTravel/internal/domain/enum"
-	"gorm.io/gorm"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/database"
 )
 
 type Payment struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	database.Model
 
 	Status    enum.PaymentStatus `gorm:"type:int"`
 	Method    enum.PaymentMethod `gorm:"type:int"`

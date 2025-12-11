@@ -1,16 +1,11 @@
 package entity
 
 import (
-	"time"
-
-	"gorm.io/gorm"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/database"
 )
 
 type FareClass struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	database.Model
 
 	Name             string `gorm:"type:varchar(20)"`
 	BaseMultiplier   int

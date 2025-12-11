@@ -1,16 +1,11 @@
 package entity
 
 import (
-	"time"
-
-	"gorm.io/gorm"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/database"
 )
 
 type Route struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	database.Model
 
 	Trips []Trip `gorm:"many2many:trip_routes"`
 
