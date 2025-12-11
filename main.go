@@ -55,11 +55,19 @@ func main() {
 
 	db := GetDB()
 
-	err := db.AutoMigrate(&entity.Admin{}, &entity.Airport{},
-		&entity.Company{}, &entity.Passenger{},
-		&entity.Payment{}, &entity.Reserve{},
-		&entity.Route{}, &entity.Seat{},
-		&entity.Trip{})
+	err := db.AutoMigrate(
+		&entity.User{},
+		&entity.Role{},
+		&entity.Airport{},
+		&entity.FareClass{},
+		&entity.Company{},
+		&entity.Passenger{},
+		&entity.Payment{},
+		&entity.Reserve{},
+		&entity.Route{},
+		&entity.Seat{},
+		&entity.Trip{},
+	)
 
 	if err != nil {
 		fmt.Printf("%s\n", err)

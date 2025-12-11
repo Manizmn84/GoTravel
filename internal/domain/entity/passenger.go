@@ -12,7 +12,6 @@ type Passenger struct {
 	FirstName    string `gorm:"type:varchar(20)"`
 	LastName     string `gorm:"type:varchar(20)"`
 	Gender       enum.Gender
-	Password     string `gorm:"type:varchar(255)"`
 	NationalCode string `gorm:"type:varchar(20)"`
 	Phone        string `gorm:"type:varchar(20)"`
 

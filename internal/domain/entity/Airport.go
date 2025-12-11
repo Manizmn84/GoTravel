@@ -1,8 +1,6 @@
 package entity
 
-import (
-	"github.com/Manizmn84/GoTravel/internal/infrastructure/database"
-)
+import "github.com/Manizmn84/GoTravel/internal/infrastructure/database"
 
 type Airport struct {
 	database.Model

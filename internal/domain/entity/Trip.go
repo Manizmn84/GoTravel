@@ -19,3 +19,7 @@ type Trip struct {
 
 	Routes []Route `gorm:"many2many:trip_routes"`
 }
+
+func (Trip) TableName() string {
+	return "trips"
+}
