@@ -7,7 +7,7 @@ import (
 
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -29,26 +29,28 @@ func initializeDB() {
 	}
 
 	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASS") // or DB_PASS
+	dbPassword := os.Getenv("DB_PASS")
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	dbName := os.Getenv("DB_NAME")
 
-	fmt.Println("ENV:", dbUser, dbPassword, dbHost, dbPort, dbName) // debug
+	fmt.Println("ENV:", dbUser, dbPassword, dbHost, dbPort, dbName)
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		dbUser, dbPassword, dbHost, dbPort, dbName)
+	// PostgreSQL DSN
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tehran",
+		dbHost, dbUser, dbPassword, dbName, dbPort,
+	)
 
-	connection, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	connection, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("Failed to connect to the database: " + err.Error())
+		panic("Failed to connect to PostgreSQL: " + err.Error())
 	}
 
 	db = connection
 }
 
 func main() {
-
 	initializeDB()
 
 	db := GetDB()
