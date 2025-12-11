@@ -2,7 +2,7 @@ package entity
 
 import (
 	"github.com/Manizmn84/GoTravel/internal/domain/enum"
-	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/database"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/database"
 )
 
 type Trip struct {
