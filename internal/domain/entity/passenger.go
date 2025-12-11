@@ -1,19 +1,23 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/Manizmn84/GoTravel/internal/domain/enum"
-	"gorm.io/gorm"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/database"
 )
 
 type Passenger struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Password  string
-	Username  string
-	Email     string `gorm:"type:varchar(100);uniqueIndex"`
-	Sex       enum.Gender
+	database.Model
+
+	Email        string `gorm:"type:varchar(100);uniqueIndex;not null"`
+	FirstName    string `gorm:"type:varchar(20)"`
+	LastName     string `gorm:"type:varchar(20)"`
+	Gender       enum.Gender
+	NationalCode string `gorm:"type:varchar(20)"`
+	Phone        string `gorm:"type:varchar(20)"`
+
+	Reserves []Reserve `gorm:"foreignKey:PassengerID"`
+}
+
+func (Passenger) TableName() string {
+	return "passengers"
 }
