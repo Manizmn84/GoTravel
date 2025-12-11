@@ -7,3 +7,14 @@ const (
 	PayPaid
 	PayNotPaid
 )
+
+func (ps PaymentStatus) String() string {
+	switch ps {
+	case PayPaid:
+		return "Paid"
+	case PayNotPaid:
+		return "Not Paid"
+	}
+
+	return "Unknown"
+}
