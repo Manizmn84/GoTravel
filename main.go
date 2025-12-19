@@ -87,11 +87,15 @@ func main() {
 	paymentRepo := postgress.NewPaymentRepository(db)
 	paymentService := service.NewPaymentService(paymentRepo, reservationRepo)
 
+	companyRepo := postgress.NewCompanyRepository(db)
+	companyService := service.NewCompanyService(companyRepo)
+
 	e := echo.New()
 
 	e.POST("/CreatePassenger", passengerService.CreatePassenger)
 	e.POST("/CreateReservation", reservationService.CreateReservation)
 	e.POST("/CreatePayment", paymentService.CreatePayment)
+	e.POST("/CreateCompany", companyService.CreateCompany)
 
 	e.Start(":8080")
 }
