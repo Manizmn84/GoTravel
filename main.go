@@ -90,12 +90,16 @@ func main() {
 	companyRepo := postgress.NewCompanyRepository(db)
 	companyService := service.NewCompanyService(companyRepo)
 
+	airportRepo := postgress.NewAirportRepository(db)
+	airportService := service.NewAirportService(airportRepo)
+
 	e := echo.New()
 
 	e.POST("/CreatePassenger", passengerService.CreatePassenger)
 	e.POST("/CreateReservation", reservationService.CreateReservation)
 	e.POST("/CreatePayment", paymentService.CreatePayment)
 	e.POST("/CreateCompany", companyService.CreateCompany)
+	e.POST("/CreateAirport", airportService.CreateAirport)
 
 	e.Start(":8080")
 }
