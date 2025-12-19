@@ -79,12 +79,15 @@ func main() {
 	fmt.Printf("Migration done!")
 
 	passengerRepo := postgress.NewPassengerRepository(db)
-
-	// Service
 	passengerService := service.NewPassengerService(passengerRepo)
+
+	reservationRepo := postgress.NewReservationRepository(db)
+	reservationService := service.NewReservationService(reservationRepo, passengerRepo)
 
 	e := echo.New()
 
 	e.POST("/CreatePassenger", passengerService.CreatePassenger)
+	e.POST("/CreateReservation", reservationService.CreateReservation)
+
 	e.Start(":8080")
 }
