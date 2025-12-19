@@ -16,3 +16,8 @@ func NewReservationRepository(db *gorm.DB) *ReservationRepository {
 func (re *ReservationRepository) CreateReservation(reservation *entity.Reserve) error {
 	return re.db.Create(reservation).Error
 }
+
+func (re *ReservationRepository) GetReservation(id uint) error {
+	var reservation entity.Reserve
+	return re.db.First(&reservation, id).Error
+}
