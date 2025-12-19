@@ -5,8 +5,11 @@ import (
 	"os"
 	"sync"
 
+	"github.com/Manizmn84/GoTravel/internal/application/service"
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
 	"github.com/joho/godotenv"
+	"github.com/labstack/echo"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -74,4 +77,14 @@ func main() {
 	}
 
 	fmt.Printf("Migration done!")
+
+	passengerRepo := postgress.NewPassengerRepository(db)
+
+	// Service
+	passengerService := service.NewPassengerService(passengerRepo)
+
+	e := echo.New()
+
+	e.POST("/CreatePassenger", passengerService.CreatePassenger)
+	e.Start(":8080")
 }
