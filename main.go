@@ -8,6 +8,7 @@ import (
 	"github.com/Manizmn84/GoTravel/internal/application/service"
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
+	"github.com/Manizmn84/GoTravel/internal/presentation/controller"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo"
 	"gorm.io/driver/postgres"
@@ -80,6 +81,7 @@ func main() {
 
 	passengerRepo := postgress.NewPassengerRepository(db)
 	passengerService := service.NewPassengerService(passengerRepo)
+	passengerController := controller.NewPassengerController(passengerService)
 
 	reservationRepo := postgress.NewReservationRepository(db)
 	reservationService := service.NewReservationService(reservationRepo, passengerRepo)
@@ -98,7 +100,7 @@ func main() {
 
 	e := echo.New()
 
-	e.POST("/CreatePassenger", passengerService.CreatePassenger)
+	e.POST("/CreatePassenger", passengerController.CreatePassenger)
 	e.POST("/CreateReservation", reservationService.CreateReservation)
 	e.POST("/CreatePayment", paymentService.CreatePayment)
 	e.POST("/CreateCompany", companyService.CreateCompany)
