@@ -1,16 +1,11 @@
 package entity
 
 import (
-	"time"
-
-	"gorm.io/gorm"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/database"
 )
 
 type Reserve struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	database.Model
 
 	TotalAmount float64 `gorm:"type:decimal(10,2)"`
 

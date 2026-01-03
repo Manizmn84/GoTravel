@@ -1,20 +1,14 @@
 package entity
 
 import (
-	"time"
-
 	"github.com/Manizmn84/GoTravel/internal/domain/enum"
-	"gorm.io/gorm"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/database"
 )
 
 type Trip struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
-	Date      time.Time      `gorm:"type:date"`
+	database.Model
 
-	CompanyID int
+	CompanyID uint
 	Company   Company `gorm:"foreignKey:CompanyID"`
 
 	Seats []Seat `gorm:"foreignKey:TripID"`
@@ -24,4 +18,8 @@ type Trip struct {
 	AircraftModel enum.AircraftModel
 
 	Routes []Route `gorm:"many2many:trip_routes"`
+}
+
+func (Trip) TableName() string {
+	return "trips"
 }

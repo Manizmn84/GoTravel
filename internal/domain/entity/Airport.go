@@ -1,16 +1,9 @@
 package entity
 
-import (
-	"time"
-
-	"gorm.io/gorm"
-)
+import "github.com/Manizmn84/GoTravel/internal/infrastructure/database"
 
 type Airport struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	database.Model
 
 	Name      string `gorm:"type:varchar(20)"`
 	Country   string `gorm:"type:varchar(20)"`
