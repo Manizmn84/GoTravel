@@ -11,6 +11,9 @@ type Seat struct {
 	Type   enum.SeatType
 	Number int
 
+	ReserveID uint    `gorm:"unique"`
+	Reserve   Reserve `gorm:"foreignKey:ReserveID"`
+
 	TripID uint `gorm:"unique"`
 	Trip   Trip `gorm:"foreignKey:TripID"`
 

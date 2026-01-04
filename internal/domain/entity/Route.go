@@ -9,9 +9,12 @@ type Route struct {
 
 	Trips []Trip `gorm:"many2many:trip_routes"`
 
-	FromAirportID uint
-	FromAirport   Airport `gorm:"foreignKey:FromAirportID"`
+	Distance int64
+	BaseTime int
 
-	ToAirportID uint
-	ToAirport   Airport `gorm:"foreignKey:ToAirportID"`
+	OriginID      uint
+	OriginAirport Airport `gorm:"foreignKey:OriginID"`
+
+	DestinationID      uint
+	DestinationAirport Airport `gorm:"foreignKey:DestinationID"`
 }

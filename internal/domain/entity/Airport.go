@@ -10,6 +10,6 @@ type Airport struct {
 	City      string `gorm:"type:varchar(20)"`
 	LATA_Code string `gorm:"type:varchar(20)"`
 
-	FromRoutes []Route `gorm:"foreignKey:FromAirportID"`
-	ToRoutes   []Route `gorm:"foreignKey:ToAirportID"`
+	FromRoutes []Route `gorm:"foreignKey:OriginID"`
+	ToRoutes   []Route `gorm:"foreignKey:DestinationID"`
 }

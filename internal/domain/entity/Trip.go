@@ -8,7 +8,7 @@ import (
 type Trip struct {
 	database.Model
 
-	CompanyID int
+	CompanyID uint
 	Company   Company `gorm:"foreignKey:CompanyID"`
 
 	Seats []Seat `gorm:"foreignKey:TripID"`
