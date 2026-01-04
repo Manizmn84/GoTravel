@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Manizmn84/GoTravel/internal/application/service"
+	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/labstack/echo"
 )
 
@@ -19,5 +20,19 @@ func NewPaymentController(pay *service.PaymentService) *PaymentController {
 
 func (py *PaymentController) CreatePayment(c echo.Context) error {
 	// TODO
-	return c.JSON(http.StatusAccepted, map[string]string{"msg": "ok"})
+	payment := new(entity.Payment)
+
+	if err := c.Bind(payment); err != nil {
+		return c.JSON(400, echo.Map{"error": err.Error()})
+	}
+
+	err := py.paymentService.CreatePayment(payment)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, err.Error())
+	}
+
+	return c.JSON(http.StatusAccepted, echo.Map{
+		"message": "Payment was created successfully",
+	})
 }
