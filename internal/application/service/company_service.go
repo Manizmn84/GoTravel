@@ -1,9 +1,10 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
-	"github.com/labstack/echo"
 )
 
 type CompanyService struct {
@@ -16,18 +17,13 @@ func NewCompanyService(
 	return &CompanyService{companyRepository: companyRepo}
 }
 
-func (com *CompanyService) CreateCompany(c echo.Context) error {
-	company := new(entity.Company)
-
-	if err := c.Bind(company); err != nil {
-		return c.JSON(400, map[string]string{"error": err.Error()})
-	}
+func (com *CompanyService) CreateCompany(company *entity.Company) error {
 
 	err := com.companyRepository.CreateCompany(company)
 
 	if err != nil {
-		return c.JSON(500, map[string]string{"error": err.Error()})
+		return errors.New(err.Error())
 	}
 
-	return c.JSON(201, company)
+	return nil
 }
