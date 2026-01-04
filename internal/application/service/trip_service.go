@@ -1,9 +1,10 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
-	"github.com/labstack/echo"
 )
 
 type TripService struct {
@@ -21,22 +22,17 @@ func NewTripService(
 	}
 }
 
-func (tripService *TripService) CreateTrip(c echo.Context) error {
-	trip := new(entity.Trip)
-
-	if err := c.Bind(trip); err != nil {
-		return c.JSON(400, map[string]string{"error": err.Error()})
-	}
+func (tripService *TripService) CreateTrip(trip *entity.Trip) error {
 
 	err := tripService.companyRepository.GetCompany(trip.CompanyID)
 
 	if err != nil {
-		return c.JSON(404, map[string]string{"error": "company not found"})
+		return errors.New("company not found")
 	}
 
 	if err := tripService.tripRepository.CreateTrip(trip); err != nil {
-		return c.JSON(500, map[string]string{"error": err.Error()})
+		return errors.New(err.Error())
 	}
 
-	return c.JSON(201, trip)
+	return nil
 }
