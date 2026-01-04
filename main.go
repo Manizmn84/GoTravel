@@ -86,6 +86,8 @@ func main() {
 	companyRepo := postgress.NewCompanyRepository(db)
 	airportRepo := postgress.NewAirportRepository(db)
 	fareClassRepo := postgress.NewFareClassRepository(db)
+	tripRepo := postgress.NewTripRepository(db)
+	seatRepo := postgress.NewSeatRepository(db)
 
 	// Services
 	passengerService := service.NewPassengerService(passengerRepo)
@@ -94,6 +96,8 @@ func main() {
 	companyService := service.NewCompanyService(companyRepo)
 	airportService := service.NewAirportService(airportRepo)
 	fareClassService := service.NewFareClassService(fareClassRepo)
+	tripService := service.NewTripService(tripRepo, companyRepo)
+	seatService := service.NewSeatService(seatRepo, fareClassRepo, reservationRepo, tripRepo)
 
 	// Controllers
 	passengerController := controller.NewPassengerController(passengerService)
@@ -102,6 +106,8 @@ func main() {
 	companyController := controller.NewCompanyController(companyService)
 	airportController := controller.NewAirportController(airportService)
 	fareClassController := controller.NewFareClassController(fareClassService)
+	tripController := controller.NewTripController(tripService)
+	seatController := controller.NewSeatController(seatService)
 
 	// Router
 	r := http.NewRouter(
@@ -111,6 +117,8 @@ func main() {
 		companyController,
 		airportController,
 		fareClassController,
+		tripController,
+		seatController,
 	)
 
 	// Start server

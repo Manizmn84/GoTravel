@@ -16,3 +16,8 @@ func NewTripRepository(db *gorm.DB) *TripRepository {
 func (tripRepo *TripRepository) CreateTrip(trip *entity.Trip) error {
 	return tripRepo.db.Create(trip).Error
 }
+
+func (tripRepo *TripRepository) GetTrip(id uint) error {
+	var trip entity.Trip
+	return tripRepo.db.Find(&trip, id).Error
+}

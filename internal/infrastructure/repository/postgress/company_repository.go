@@ -19,5 +19,5 @@ func (co *CompanyRepository) CreateCompany(company *entity.Company) error {
 
 func (co *CompanyRepository) GetCompany(id uint) error {
 	var company entity.Company
-	return co.db.First(company, id).Error
+	return co.db.First(&company, id).Error
 }

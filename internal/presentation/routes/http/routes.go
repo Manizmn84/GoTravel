@@ -17,6 +17,8 @@ func NewRouter(
 	companyController *controller.CompanyController,
 	airportController *controller.AirportController,
 	fareClassController *controller.FareClassController,
+	tripController *controller.TripController,
+	seatController *controller.SeatController,
 ) *Router {
 
 	e := echo.New()
@@ -27,6 +29,8 @@ func NewRouter(
 	e.POST("/CreateCompany", companyController.CreateCompany)
 	e.POST("/CreateAirport", airportController.CreateAirport)
 	e.POST("/CreateFareClass", fareClassController.CreateFareClass)
+	e.POST("/CreateTrip", tripController.CreateTrip)
+	e.POST("/CreateSeat", seatController.CreateSeat)
 
 	return &Router{
 		Echo: e,

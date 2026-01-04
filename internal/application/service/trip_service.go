@@ -27,7 +27,7 @@ func (tripService *TripService) CreateTrip(trip *entity.Trip) error {
 	err := tripService.companyRepository.GetCompany(trip.CompanyID)
 
 	if err != nil {
-		return errors.New("company not found")
+		return errors.New(err.Error())
 	}
 
 	if err := tripService.tripRepository.CreateTrip(trip); err != nil {
