@@ -16,3 +16,7 @@ func NewAirportRepository(db *gorm.DB) *AirportRepository {
 func (ap *AirportRepository) CreateAirport(airport *entity.Airport) error {
 	return ap.db.Create(airport).Error
 }
+
+func (ap *AirportRepository) GetAirport(id uint) error {
+	return ap.db.First(&entity.Airport{}, id).Error
+}

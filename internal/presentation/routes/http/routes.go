@@ -19,6 +19,7 @@ func NewRouter(
 	fareClassController *controller.FareClassController,
 	tripController *controller.TripController,
 	seatController *controller.SeatController,
+	routeController *controller.RouteController,
 ) *Router {
 
 	e := echo.New()
@@ -31,6 +32,7 @@ func NewRouter(
 	e.POST("/CreateFareClass", fareClassController.CreateFareClass)
 	e.POST("/CreateTrip", tripController.CreateTrip)
 	e.POST("/CreateSeat", seatController.CreateSeat)
+	e.POST("/CreateRoute", routeController.CreateRoute)
 
 	return &Router{
 		Echo: e,
