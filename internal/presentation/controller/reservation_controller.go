@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Manizmn84/GoTravel/internal/application/service"
+	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/labstack/echo"
 )
 
@@ -18,8 +19,21 @@ func NewReservationController(rs *service.ReservationService) *ReservationContro
 }
 
 func (rs *ReservationController) CreateReservation(c echo.Context) error {
-	// TODO
-	return c.JSON(http.StatusAccepted, map[string]string{
-		"msg": "accept",
+	reserve := new(entity.Reserve)
+
+	if err := c.Bind(reserve); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	if err := rs.reservationService.CreateReservation(reserve); err != nil {
+		return c.JSON(http.StatusNotFound, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusCreated, echo.Map{
+		"message": "reservation created successfully",
 	})
 }
