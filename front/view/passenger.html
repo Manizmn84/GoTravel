@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../styles/passenger.css" />
+    <title>Add Passenger</title>
+  </head>
+  <body>
+    <form action="">
+      <label>Email:</label>
+      <input type="email" name="Email" maxlength="20" required autofocus />
+
+      <label>First Name:</label>
+      <input type="text" name="FirstName" maxlength="50" required />
+
+      <label>Last Name:</label>
+      <input type="text" name="LastName" maxlength="50" required />
+
+      <label>Gender:</label>
+      <select name="Gender" required>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+
+      <label>Birth Date:</label>
+      <input type="date" name="BirthDate" required />
+
+      <label>National Code:</label>
+      <input type="text" name="NationalCode" maxlength="20" required />
+
+      <label>Phone:</label>
+      <input type="text" name="Phone" maxlength="13" required />
+
+      <button type="submit">Save Passenger</button>
+    </form>
+  </body>
+</html>

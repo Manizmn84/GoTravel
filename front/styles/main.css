@@ -1,0 +1,135 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #e8f6ee;
+}
+
+.header {
+  background: #04ad59;
+  padding: 15px;
+  color: white;
+  text-align: center;
+  box-shadow: 0 0 10px #015c2f;
+}
+
+.search-box {
+  width: 350px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #04ad589f;
+}
+
+.search-box h2 {
+  text-align: center;
+  color: #04ad59;
+}
+
+.form-row {
+  margin-top: 12px;
+}
+
+.form-row label {
+  display: block;
+  font-size: 14px;
+}
+
+.form-row input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.form-row input:focus {
+  outline: none;
+  border-color: #04ad59;
+}
+
+.search-btn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 10px;
+  background: #04ad59;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 0 10px #04ad59;
+}
+
+.search-btn:hover {
+  background: #015c2f;
+}
+
+.filters {
+  margin: 20px auto;
+  text-align: center;
+}
+
+.filter-btn {
+  margin: 5px;
+  padding: 8px 15px;
+  background: white;
+  border: 1px solid #04ad59;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  background: #04ad59;
+  color: white;
+}
+
+.flight-list {
+  width: 400px;
+  margin: 20px auto;
+}
+
+.flight-card {
+  background: white;
+  padding: 15px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #04ad589f;
+}
+
+.buy-btn {
+  margin-top: 10px;
+  padding: 8px;
+  width: 100%;
+  background: #04ad59;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.buy-btn:hover {
+  background: #015c2f;
+}
+.dropdown {
+  position: absolute;
+  width: 300px;
+  background: white;
+  border: 1px solid #04ad59;
+  border-radius: 5px;
+  margin-top: 2px;
+  display: none;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.dropdown div {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown div:hover {
+  background: #04ad59;
+  color: white;
+}

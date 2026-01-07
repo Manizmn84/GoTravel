@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IUST Flight Reservation System</title>
+    <link rel="stylesheet" href="../styles/main.css" />
+  </head>
+  <body>
+    <header class="header">
+      <h1>IUST Airline Reservation System</h1>
+    </header>
+
+    <section class="search-box">
+      <h2>Find Your Flight</h2>
+
+      <div class="form-row">
+        <label>From:</label>
+        <input
+          type="text"
+          id="from"
+          class="search-input"
+          placeholder="Start typing..."
+        />
+        <div id="from-list" class="dropdown"></div>
+      </div>
+
+      <div class="form-row">
+        <label>To:</label>
+        <input
+          type="text"
+          id="to"
+          class="search-input"
+          placeholder="Start typing..."
+        />
+        <div id="to-list" class="dropdown"></div>
+      </div>
+
+      <div class="form-row">
+        <label>Date:</label>
+        <input type="date" id="date" />
+      </div>
+
+      <div class="form-row">
+        <label>Passengers:</label>
+        <input type="number" id="passengers" min="1" value="1" />
+      </div>
+
+      <button class="search-btn">Search Flights</button>
+    </section>
+
+    <section class="filters">
+      <button class="filter-btn">Cheapest</button>
+      <button class="filter-btn">Fastest</button>
+      <button class="filter-btn">Earliest</button>
+      <button class="filter-btn">Nearest Airport</button>
+    </section>
+
+    <section class="flight-list">
+      <h3>Available Flights</h3>
+
+      <div class="flight-card">
+        <p><strong>Tehran → Mashhad</strong></p>
+        <p>Airline: Mahan</p>
+        <p>Price: 2,100,000</p>
+        <button class="buy-btn">Select</button>
+      </div>
+
+      <div class="flight-card">
+        <p><strong>Tehran → Shiraz</strong></p>
+        <p>Airline: IranAir</p>
+        <p>Price: 1,800,000</p>
+        <button class="buy-btn">Select</button>
+      </div>
+    </section>
+  </body>
+</html>
