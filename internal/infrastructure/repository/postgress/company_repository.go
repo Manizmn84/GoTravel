@@ -1,6 +1,8 @@
 package postgress
 
 import (
+	"errors"
+
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"gorm.io/gorm"
 )
@@ -14,6 +16,11 @@ func NewCompanyRepository(db *gorm.DB) *CompanyRepository {
 }
 
 func (co *CompanyRepository) CreateCompany(company *entity.Company) error {
+
+	if co.db.Where("Name = ? AND Country = ?", company.Name, company.Country).First(&entity.Company{}).Error == nil {
+		return errors.New("The Instance is Exist.")
+	}
+
 	return co.db.Create(company).Error
 }
 
