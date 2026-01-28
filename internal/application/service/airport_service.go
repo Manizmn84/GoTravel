@@ -63,3 +63,7 @@ func (s *AirportService) List() ([]entity.Airport, error) {
 func (s *AirportService) AirportRouteList(airportID uint) ([]model.AirportRouteItem, error) {
 	return s.airportRepository.AirportRouteList(airportID)
 }
+
+func (s *AirportService) GetAirportDependency(airportID uint) ([]model.AirportDependencyReport, error) {
+	return s.airportRepository.AirportDependency(airportID)
+}
