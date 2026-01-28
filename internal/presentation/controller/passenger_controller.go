@@ -42,3 +42,16 @@ func (pc *PassengerController) CreatePassenger(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, passenger)
 }
+
+func (c *PassengerController) List(ctx echo.Context) error {
+	passengers, err := c.passengerService.List()
+	if err != nil {
+		return ctx.JSON(500, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.JSON(200, echo.Map{
+		"data": passengers,
+	})
+}
