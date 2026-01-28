@@ -5,6 +5,7 @@ import (
 
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
+	"github.com/Manizmn84/GoTravel/internal/model"
 )
 
 type CompanyService struct {
@@ -26,4 +27,13 @@ func (com *CompanyService) CreateCompany(company *entity.Company) error {
 	}
 
 	return nil
+}
+
+// internal/report/service/airline_flights.go
+func (s *CompanyService) AirlineFlightCount(airlineID uint) (*model.AirlineFlightCount, error) {
+	return s.companyRepository.AirlineFlightCount(airlineID)
+}
+
+func (s *CompanyService) List() ([]entity.Company, error) {
+	return s.companyRepository.List()
 }
