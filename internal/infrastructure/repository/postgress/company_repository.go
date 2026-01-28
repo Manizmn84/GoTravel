@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
+	"github.com/Manizmn84/GoTravel/internal/model"
 	"gorm.io/gorm"
 )
 
@@ -27,4 +28,33 @@ func (co *CompanyRepository) CreateCompany(company *entity.Company) error {
 func (co *CompanyRepository) GetCompany(id uint) error {
 	var company entity.Company
 	return co.db.First(&company, id).Error
+}
+
+// internal/report/repository/airline_flights.go
+func (r *CompanyRepository) AirlineFlightCount(companyID uint) (*model.AirlineFlightCount, error) {
+	var result model.AirlineFlightCount
+
+	err := r.db.Table("companies c").
+		Select(`
+			c.id   AS airline_id,
+			c.name AS airline_name,
+			COUNT(t.id) AS flight_count
+		`).
+		Joins("LEFT JOIN trips t ON t.company_id = c.id").
+		Where("c.id = ?", companyID).
+		Group("c.id, c.name").
+		Scan(&result).Error
+
+	return &result, err
+}
+
+func (r *CompanyRepository) List() ([]entity.Company, error) {
+	var airlines []entity.Company
+
+	err := r.db.Find(&airlines).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return airlines, nil
 }
