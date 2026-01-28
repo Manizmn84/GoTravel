@@ -2,173 +2,113 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Airport Routes Report</title>
+  <title>Airport Routes List</title>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- React -->
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 
-<body
-  class="min-h-screen bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#020617]
-         text-gray-100"
->
-  <!-- ✅ سنتر واقعی اینجاست -->
-  <div
-    id="root"
-    class="min-h-screen flex items-center justify-center px-4"
-  ></div>
+<body class="min-h-screen bg-gradient-to-br from-[#1e1b4b] via-[#312e81] to-[#020617] text-gray-100">
+  <div id="root" class="min-h-screen flex items-center justify-center px-4"></div>
 
   <script type="text/babel">
     function App() {
       const [airports, setAirports] = React.useState([]);
-      const [selectedAirport, setSelectedAirport] = React.useState("");
-      const [report, setReport] = React.useState(null);
+      const [airportId, setAirportId] = React.useState("");
+      const [routes, setRoutes] = React.useState([]);
       const [loading, setLoading] = React.useState(false);
-      const [error, setError] = React.useState("");
 
       React.useEffect(() => {
         fetch("http://localhost:8080/airports")
           .then(res => res.json())
-          .then(result => {
-            const raw = Array.isArray(result)
-              ? result
-              : (result.data || []);
-
-            setAirports(
-              raw.map((a, i) => ({
-                id: a.id != null ? a.id : (a.ID != null ? a.ID : i),
-                name: a.name || a.Name || "-"
-              }))
-            );
-          })
-          .catch(() => setError("Failed to load airports"));
+          .then(r => setAirports(r.data || []));
       }, []);
 
       React.useEffect(() => {
-        if (!selectedAirport) {
-          setReport(null);
-          return;
-        }
+        if (!airportId) return;
 
         setLoading(true);
-        setError("");
-
         fetch(
-          "http://localhost:8080/reports/airport-routes?airport_id=" +
-            selectedAirport
+          "http://localhost:8080/reports/airport-routes-list?airport_id=" +
+            airportId
         )
           .then(res => res.json())
-          .then(result => {
-            const r = result.data;
-            if (!r) return;
-
-            setReport({
-              airportName: r.airport_name || r.AirportName,
-              incoming:
-                r.incoming_count != null
-                  ? r.incoming_count
-                  : r.IncomingCount,
-              outgoing:
-                r.outgoing_count != null
-                  ? r.outgoing_count
-                  : r.OutgoingCount
-            });
-          })
-          .catch(() => setError("Failed to load report"))
+          .then(r => setRoutes(r.data || []))
           .finally(() => setLoading(false));
-      }, [selectedAirport]);
+      }, [airportId]);
 
       return (
-        <div className="w-full max-w-xl">
-          <div
-            className="bg-white/10 backdrop-blur-xl border border-white/20
-                       rounded-2xl shadow-2xl p-6"
-          >
+        <div className="w-full max-w-4xl">
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-6">
             <h1 className="text-2xl font-bold text-center mb-6 text-indigo-200">
-              Airport Routes Report
+              Airport Routes List
             </h1>
 
-            <label className="block mb-2 text-sm text-indigo-300">
-              Select Airport
-            </label>
-
             <select
-              value={selectedAirport}
-              onChange={(e) => setSelectedAirport(e.target.value)}
-              className="w-full bg-slate-900/70 border border-indigo-500/40
-                         text-gray-100 rounded-lg px-3 py-2
-                         focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">-- Select Airport --</option>
-              {airports.map(a => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
+  value={airportId}
+  onChange={(e) => setAirportId(e.target.value)}
+  className="w-full mb-6 bg-slate-900/70 border border-indigo-500/40
+             rounded-lg px-3 py-2"
+>
+  <option value="">-- Select Airport --</option>
+
+  {airports.map((a, index) => {
+    const id = a.id != null ? a.id : a.ID;
+
+    return (
+      <option
+        key={id + "-" + index}   // ✅ key یکتا
+        value={id}
+      >
+        {a.name || a.Name}
+      </option>
+    );
+  })}
+</select>
+
 
             {loading && (
-              <div className="mt-6 text-center text-indigo-300">
-                Loading report...
-              </div>
+              <div className="text-center text-indigo-300">Loading...</div>
             )}
 
-            {error && (
-              <div className="mt-6 text-center text-red-400 text-sm">
-                {error}
-              </div>
-            )}
-
-            {report && !loading && (
-              <div className="mt-6">
-                <div className="text-center mb-4 text-indigo-200 font-medium">
-                  {report.airportName}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div
-                    className="bg-gradient-to-br from-emerald-900/60
-                               to-emerald-700/40
-                               border border-emerald-400/30
-                               rounded-xl p-4 text-center"
-                  >
-                    <div className="text-sm text-emerald-300">
-                      Incoming Routes
-                    </div>
-                    <div className="text-2xl font-bold text-emerald-200">
-                      {report.incoming}
-                    </div>
-                  </div>
-
-                  <div
-                    className="bg-gradient-to-br from-indigo-900/60
-                               to-blue-800/40
-                               border border-indigo-400/30
-                               rounded-xl p-4 text-center"
-                  >
-                    <div className="text-sm text-indigo-300">
-                      Outgoing Routes
-                    </div>
-                    <div className="text-2xl font-bold text-indigo-200">
-                      {report.outgoing}
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {!loading && routes.length > 0 && (
+              <table className="w-full text-sm border border-white/20 rounded-lg overflow-hidden">
+                <thead className="bg-indigo-900/40">
+                  <tr>
+                    <th className="p-2 text-left">Origin</th>
+                    <th className="p-2 text-left">Destination</th>
+                    <th className="p-2 text-center">Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {routes.map((r, i) => (
+                    <tr key={i} className="border-t border-white/10">
+                      <td className="p-2">{r.origin_airport}</td>
+                      <td className="p-2">{r.destination_airport}</td>
+                      <td className="p-2 text-center">
+                        <span
+                          className={
+                            r.route_type === "OUTGOING"
+                              ? "text-emerald-300"
+                              : "text-sky-300"
+                          }
+                        >
+                          {r.route_type}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         </div>
       );
     }
 
-    ReactDOM
-      .createRoot(document.getElementById("root"))
-      .render(<App />);
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>

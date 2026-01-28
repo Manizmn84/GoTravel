@@ -5,6 +5,7 @@ import (
 
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
+	"github.com/Manizmn84/GoTravel/internal/model"
 	"gorm.io/gorm"
 )
 
@@ -57,4 +58,8 @@ func (s *AirportService) AirportRoutesCount(airportID uint) (*postgress.AirportR
 
 func (s *AirportService) List() ([]entity.Airport, error) {
 	return s.airportRepository.List()
+}
+
+func (s *AirportService) AirportRouteList(airportID uint) ([]model.AirportRouteItem, error) {
+	return s.airportRepository.AirportRouteList(airportID)
 }

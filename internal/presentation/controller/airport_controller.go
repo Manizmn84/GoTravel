@@ -104,3 +104,24 @@ func (c *AirportController) AirportRoutes(ctx echo.Context) error {
 		"data": data,
 	})
 }
+
+func (h *AirportController) AirportRoutesList(c echo.Context) error {
+	airportIDStr := c.QueryParam("airport_id")
+	airportID, err := strconv.ParseUint(airportIDStr, 10, 64)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"message": "invalid airport_id",
+		})
+	}
+
+	data, err := h.airPortService.AirportRouteList(uint(airportID))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, echo.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.JSON(http.StatusOK, echo.Map{
+		"data": data,
+	})
+}
