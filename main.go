@@ -5,7 +5,11 @@ import (
 	"os"
 	"sync"
 
+	"github.com/Manizmn84/GoTravel/internal/application/service"
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
+	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
+	"github.com/Manizmn84/GoTravel/internal/presentation/controller"
+	"github.com/Manizmn84/GoTravel/internal/presentation/routes/http"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -74,4 +78,53 @@ func main() {
 	}
 
 	fmt.Printf("Migration done!")
+
+	// Repositories
+	passengerRepo := postgress.NewPassengerRepository(db)
+	reservationRepo := postgress.NewReservationRepository(db)
+	paymentRepo := postgress.NewPaymentRepository(db)
+	companyRepo := postgress.NewCompanyRepository(db)
+	airportRepo := postgress.NewAirportRepository(db)
+	fareClassRepo := postgress.NewFareClassRepository(db)
+	tripRepo := postgress.NewTripRepository(db)
+	seatRepo := postgress.NewSeatRepository(db)
+	routeRepo := postgress.NewRouteRepository(db)
+
+	// Services
+	passengerService := service.NewPassengerService(passengerRepo)
+	reservationService := service.NewReservationService(reservationRepo, passengerRepo)
+	paymentService := service.NewPaymentService(paymentRepo, reservationRepo)
+	companyService := service.NewCompanyService(companyRepo)
+	airportService := service.NewAirportService(airportRepo)
+	fareClassService := service.NewFareClassService(fareClassRepo)
+	tripService := service.NewTripService(tripRepo, companyRepo)
+	seatService := service.NewSeatService(seatRepo, fareClassRepo, reservationRepo, tripRepo)
+	routeService := service.NewRouteService(routeRepo, airportRepo)
+
+	// Controllers
+	passengerController := controller.NewPassengerController(passengerService)
+	reservationController := controller.NewReservationController(reservationService)
+	paymentController := controller.NewPaymentController(paymentService)
+	companyController := controller.NewCompanyController(companyService)
+	airportController := controller.NewAirportController(airportService)
+	fareClassController := controller.NewFareClassController(fareClassService)
+	tripController := controller.NewTripController(tripService)
+	seatController := controller.NewSeatController(seatService)
+	routeController := controller.NewRouteController(routeService)
+
+	// Router
+	r := http.NewRouter(
+		passengerController,
+		reservationController,
+		paymentController,
+		companyController,
+		airportController,
+		fareClassController,
+		tripController,
+		seatController,
+		routeController,
+	)
+
+	// Start server
+	r.Start(":8080")
 }
