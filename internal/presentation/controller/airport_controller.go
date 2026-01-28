@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Manizmn84/GoTravel/internal/application/service"
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
@@ -33,4 +35,72 @@ func (air *AirportController) CreateAirport(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusAccepted, map[string]string{"msg": "ok"})
+}
+
+func (air *AirportController) Update(c echo.Context) error {
+	fmt.Printf("this is in controller\n")
+	airport := new(entity.Airport)
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	if err := air.airPortService.Exist(uint(id)); err != nil {
+		return c.JSON(400, echo.Map{"error": err.Error()})
+	}
+
+	if err := c.Bind(airport); err != nil {
+		return c.JSON(400, echo.Map{"error": err.Error()})
+	}
+	airport.ID = uint(id)
+	err := air.airPortService.Update(airport)
+
+	if err != nil {
+		return c.JSON(http.StatusForbidden, echo.Map{"error": err.Error()})
+	}
+
+	return c.JSON(http.StatusAccepted, map[string]string{"msg": "Update Is Succesfully"})
+
+}
+
+func (air *AirportController) ListAllAirport(c echo.Context) error {
+	ListAirport := air.airPortService.ListAllAirport()
+	return c.JSON(http.StatusAccepted, map[string]interface{}{"msg": ListAirport})
+}
+
+func (c *AirportController) List(ctx echo.Context) error {
+	airports, err := c.airPortService.List()
+	if err != nil {
+		return ctx.JSON(500, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.JSON(200, echo.Map{
+		"data": airports,
+	})
+}
+
+func (c *AirportController) AirportRoutes(ctx echo.Context) error {
+	airportIDStr := ctx.QueryParam("airport_id")
+	if airportIDStr == "" {
+		return ctx.JSON(400, echo.Map{
+			"error": "airport_id is required",
+		})
+	}
+
+	airportID, err := strconv.Atoi(airportIDStr)
+	if err != nil {
+		return ctx.JSON(400, echo.Map{
+			"error": "invalid airport_id",
+		})
+	}
+
+	data, err := c.airPortService.AirportRoutesCount(uint(airportID))
+	if err != nil {
+		return ctx.JSON(500, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.JSON(200, echo.Map{
+		"data": data,
+	})
 }

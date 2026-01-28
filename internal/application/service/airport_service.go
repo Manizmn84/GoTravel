@@ -5,6 +5,7 @@ import (
 
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
+	"gorm.io/gorm"
 )
 
 type AirportService struct {
@@ -26,4 +27,34 @@ func (air *AirportService) CreateAirport(airport *entity.Airport) error {
 	}
 
 	return nil
+}
+
+func (air *AirportService) Update(airport *entity.Airport) error {
+	if err := air.airportRepository.GetAirport(airport.ID); err != nil {
+		return errors.New("The airport with that Id is Not Exist.")
+	}
+	err := air.airportRepository.Update(airport)
+
+	if err != nil {
+		return errors.New(err.Error())
+	}
+
+	return nil
+}
+
+func (air *AirportService) Exist(id uint) error {
+	return air.airportRepository.GetAirport(id)
+}
+
+func (air *AirportService) ListAllAirport() *gorm.DB {
+	ListAirport := air.airportRepository.ListAllAirport()
+	return ListAirport
+}
+
+func (s *AirportService) AirportRoutesCount(airportID uint) (*postgress.AirportRouteCount, error) {
+	return s.airportRepository.AirportRoutesCount(airportID)
+}
+
+func (s *AirportService) List() ([]entity.Airport, error) {
+	return s.airportRepository.List()
 }

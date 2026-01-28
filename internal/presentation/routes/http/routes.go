@@ -1,9 +1,9 @@
 package http
 
 import (
-	"github.com/labstack/echo"
-
 	"github.com/Manizmn84/GoTravel/internal/presentation/controller"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type Router struct {
@@ -24,6 +24,17 @@ func NewRouter(
 
 	e := echo.New()
 
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{
+			echo.GET,
+			echo.POST,
+			echo.PUT,
+			echo.DELETE,
+			echo.OPTIONS,
+		},
+	}))
+
 	e.POST("/CreatePassenger", passengerController.CreatePassenger)
 	e.POST("/CreateReservation", reservationController.CreateReservation)
 	e.POST("/CreatePayment", paymentController.CreatePayment)
@@ -33,6 +44,9 @@ func NewRouter(
 	e.POST("/CreateTrip", tripController.CreateTrip)
 	e.POST("/CreateSeat", seatController.CreateSeat)
 	e.POST("/CreateRoute", routeController.CreateRoute)
+	e.PUT("/UpdateAirport/:id", airportController.Update)
+	e.GET("/airports", airportController.List)
+	e.GET("/reports/airport-routes", airportController.AirportRoutes)
 
 	return &Router{
 		Echo: e,

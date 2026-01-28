@@ -25,3 +25,47 @@ func (ap *AirportRepository) CreateAirport(airport *entity.Airport) error {
 func (ap *AirportRepository) GetAirport(id uint) error {
 	return ap.db.First(&entity.Airport{}, id).Error
 }
+
+func (ap *AirportRepository) ListAllAirport() *gorm.DB {
+	AllAirport := []entity.Airport{}
+	return ap.db.Find(&AllAirport)
+}
+
+func (ap *AirportRepository) Update(airport *entity.Airport) error {
+	var air entity.Airport
+	ap.db.Where("ID = ?", airport.ID).First(&air)
+	return ap.db.Model(&air).Updates(airport).Error
+}
+
+type AirportRouteCount struct {
+	AirportID     uint
+	AirportName   string
+	IncomingCount int64
+	OutgoingCount int64
+}
+
+func (r *AirportRepository) AirportRoutesCount(airportID uint) (*AirportRouteCount, error) {
+	var result AirportRouteCount
+
+	err := r.db.
+		Table("airports a").
+		Select(`
+			a.id as airport_id,
+			a.name as airport_name,
+			COUNT(DISTINCT rin.id) as incoming_count,
+			COUNT(DISTINCT rout.id) as outgoing_count
+		`).
+		Joins("LEFT JOIN routes rin ON rin.destination_id = a.id").
+		Joins("LEFT JOIN routes rout ON rout.origin_id = a.id").
+		Where("a.id = ?", airportID).
+		Group("a.id, a.name").
+		Scan(&result).Error
+
+	return &result, err
+}
+
+func (r *AirportRepository) List() ([]entity.Airport, error) {
+	var airports []entity.Airport
+	err := r.db.Find(&airports).Error
+	return airports, err
+}
