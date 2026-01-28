@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Company List</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React -->
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+  <!-- Babel -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #1e1b4b, #020617);
+      min-height: 100vh;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  function App() {
+
+    const [companies, setCompanies] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+
+    // ===============================
+    // LOAD COMPANIES
+    // ===============================
+    React.useEffect(function () {
+      fetch("http://localhost:8080/companies")
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (result) {
+          var list = result && result.data ? result.data : [];
+
+          // normalize backend fields
+          var normalized = list.map(function (c) {
+            return {
+              id: c.ID,
+              name: c.Name,
+              country: c.Country,
+              email: c.ContactEmail
+            };
+          });
+
+          setCompanies(normalized);
+          setLoading(false);
+        })
+        .catch(function (err) {
+          console.error(err);
+          setCompanies([]);
+          setLoading(false);
+        });
+    }, []);
+
+    return (
+      <div className="w-full max-w-5xl p-8 bg-white/10 rounded-xl backdrop-blur-lg shadow-xl">
+
+        <h1 className="text-3xl font-bold mb-8 text-center text-sky-300">
+          Company List
+        </h1>
+
+        {/* Loading */}
+        {loading && (
+          <div className="text-center text-sky-300">
+            Loading companies...
+          </div>
+        )}
+
+        {/* Table */}
+        {!loading && companies.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="text-sky-300 border-b border-sky-500">
+                  <th className="p-3 text-left">#</th>
+                  <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">Country</th>
+                  <th className="p-3 text-left">Contact Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                {companies.map(function (c, index) {
+                  return (
+                    <tr
+                      key={c.id}
+                      className="border-b border-white/10 hover:bg-white/5"
+                    >
+                      <td className="p-3">{index + 1}</td>
+                      <td className="p-3 font-medium">{c.name}</td>
+                      <td className="p-3">{c.country}</td>
+                      <td className="p-3 text-sky-200">{c.email}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Empty */}
+        {!loading && companies.length === 0 && (
+          <div className="text-center text-slate-400">
+            No companies found
+          </div>
+        )}
+
+      </div>
+    );
+  }
+
+  ReactDOM.render(<App />, document.getElementById("root"));
+</script>
+
+</body>
+</html>
