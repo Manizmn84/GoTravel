@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Airport List</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React -->
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+  <!-- Babel -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #0f172a, #020617);
+      min-height: 100vh;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  function App() {
+
+    const [airports, setAirports] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+
+    // ===============================
+    // LOAD AIRPORTS
+    // ===============================
+    React.useEffect(function () {
+      fetch("http://localhost:8080/airports")
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (result) {
+          var list = result && result.data ? result.data : [];
+
+          // normalize backend fields
+          var normalized = list.map(function (a) {
+            return {
+              id: a.ID,
+              name: a.Name,
+              country: a.Country,
+              city: a.City,
+              code: a.LATA_Code
+            };
+          });
+
+          setAirports(normalized);
+          setLoading(false);
+        })
+        .catch(function (err) {
+          console.error(err);
+          setAirports([]);
+          setLoading(false);
+        });
+    }, []);
+
+    return (
+      <div className="w-full max-w-6xl p-8 bg-white/10 rounded-xl backdrop-blur-lg shadow-xl">
+
+        <h1 className="text-3xl font-bold mb-8 text-center text-emerald-300">
+          Airport List
+        </h1>
+
+        {/* Loading */}
+        {loading && (
+          <div className="text-center text-emerald-300">
+            Loading airports...
+          </div>
+        )}
+
+        {/* Table */}
+        {!loading && airports.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <thead>
+                <tr className="text-emerald-300 border-b border-emerald-500">
+                  <th className="p-3 text-left">#</th>
+                  <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">City</th>
+                  <th className="p-3 text-left">Country</th>
+                  <th className="p-3 text-left">IATA</th>
+                </tr>
+              </thead>
+              <tbody>
+                {airports.map(function (a, index) {
+                  return (
+                    <tr
+                      key={a.id}
+                      className="border-b border-white/10 hover:bg-white/5"
+                    >
+                      <td className="p-3">{index + 1}</td>
+                      <td className="p-3 font-medium">{a.name}</td>
+                      <td className="p-3">{a.city}</td>
+                      <td className="p-3">{a.country}</td>
+                      <td className="p-3 text-emerald-200 font-mono">
+                        {a.code}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Empty */}
+        {!loading && airports.length === 0 && (
+          <div className="text-center text-slate-400">
+            No airports found
+          </div>
+        )}
+
+      </div>
+    );
+  }
+
+  ReactDOM.render(<App />, document.getElementById("root"));
+</script>
+
+</body>
+</html>
