@@ -47,6 +47,7 @@ func NewRouter(
 	e.PUT("/UpdateAirport/:id", airportController.Update)
 	e.GET("/airports", airportController.List)
 	e.GET("/reports/airport-routes", airportController.AirportRoutes)
+	e.GET("/reports/airport-routes-list", airportController.AirportRoutesList)
 
 	return &Router{
 		Echo: e,

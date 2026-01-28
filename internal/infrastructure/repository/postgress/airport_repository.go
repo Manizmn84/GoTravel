@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
+	"github.com/Manizmn84/GoTravel/internal/model"
 	"gorm.io/gorm"
 )
 
@@ -68,4 +69,28 @@ func (r *AirportRepository) List() ([]entity.Airport, error) {
 	var airports []entity.Airport
 	err := r.db.Find(&airports).Error
 	return airports, err
+}
+
+// internal/report/repository/airport_routes.go
+func (r *AirportRepository) AirportRouteList(airportID uint) ([]model.AirportRouteItem, error) {
+	var routes []model.AirportRouteItem
+
+	query := `
+		SELECT
+			r.id AS route_id,
+			o.name AS origin_airport,
+			d.name AS destination_airport,
+			CASE
+				WHEN r.origin_id = ? THEN 'OUTGOING'
+				ELSE 'INCOMING'
+			END AS route_type
+		FROM routes r
+		JOIN airports o ON o.id = r.origin_id
+		JOIN airports d ON d.id = r.destination_id
+		WHERE r.origin_id = ? OR r.destination_id = ?
+		ORDER BY route_type
+	`
+
+	err := r.db.Raw(query, airportID, airportID, airportID).Scan(&routes).Error
+	return routes, err
 }
