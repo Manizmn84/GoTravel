@@ -21,3 +21,14 @@ func (repo *PassengerRepository) GetPassenger(id uint) error {
 	var passenger entity.Passenger
 	return repo.db.First(&passenger, id).Error
 }
+
+func (r *PassengerRepository) List() ([]*entity.Passenger, error) {
+	var passengers []*entity.Passenger
+
+	err := r.db.Find(&passengers).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return passengers, nil
+}

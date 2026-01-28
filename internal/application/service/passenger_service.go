@@ -16,3 +16,12 @@ func NewPassengerService(repo *postgress.PassengerRepository) *PassengerService 
 func (passengerService *PassengerService) CreatePassenger(passenger *entity.Passenger) error {
 	return passengerService.passengerRepository.CreatePassenger(passenger)
 }
+
+func (s *PassengerService) List() ([]*entity.Passenger, error) {
+	passengers, err := s.passengerRepository.List()
+	if err != nil {
+		return nil, err
+	}
+
+	return passengers, nil
+}
