@@ -94,3 +94,59 @@ func (r *AirportRepository) AirportRouteList(airportID uint) ([]model.AirportRou
 	err := r.db.Raw(query, airportID, airportID, airportID).Scan(&routes).Error
 	return routes, err
 }
+
+func (r *AirportRepository) AirportDependency(airportID uint) ([]model.AirportDependencyReport, error) {
+	var result []model.AirportDependencyReport
+
+	err := r.db.Table("airports a").
+		Select(`
+			a.id AS airport_id,
+			a.name AS airport_name,
+			c.id AS company_id,
+			c.name AS company_name,
+			COUNT(DISTINCT t.id) AS flight_count,
+			COALESCE(
+				COUNT(DISTINCT t.id)::float / NULLIF(total.total_flights, 0),
+				0
+			) AS dependency_ratio
+		`).
+		Joins(`
+			LEFT JOIN routes r 
+			  ON r.origin_id = a.id 
+			  OR r.destination_id = a.id
+		`).
+		Joins(`
+			LEFT JOIN trip_routes tr 
+			  ON tr.route_id = r.id
+		`).
+		Joins(`
+			LEFT JOIN trips t 
+			  ON t.id = tr.trip_id
+		`).
+		Joins(`
+			LEFT JOIN companies c 
+			  ON c.id = t.company_id
+		`).
+		Joins(`
+			LEFT JOIN (
+				SELECT
+					a2.id AS airport_id,
+					COUNT(DISTINCT t2.id) AS total_flights
+				FROM airports a2
+				LEFT JOIN routes r2 
+				  ON r2.origin_id = a2.id 
+				  OR r2.destination_id = a2.id
+				LEFT JOIN trip_routes tr2 
+				  ON tr2.route_id = r2.id
+				LEFT JOIN trips t2 
+				  ON t2.id = tr2.trip_id
+				GROUP BY a2.id
+			) total ON total.airport_id = a.id
+		`).
+		Where("a.id = ?", airportID).
+		Group("a.id, a.name, c.id, c.name, total.total_flights").
+		Order("dependency_ratio DESC").
+		Scan(&result).Error
+
+	return result, err
+}

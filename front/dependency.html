@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Airport Airline Dependency Index</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React 16 -->
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+  <!-- Babel v6 -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #1e1b4b, #020617);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- React Root -->
+  <div id="root"></div>
+
+  <!-- ✅ React Code -->
+  <script type="text/babel">
+    function App() {
+
+      // ===============================
+      // STATE
+      // ===============================
+      const [airports, setAirports] = React.useState([]);
+      const [selectedAirport, setSelectedAirport] = React.useState("");
+      const [report, setReport] = React.useState([]);
+      const [loading, setLoading] = React.useState(false);
+
+      // ===============================
+      // LOAD AIRPORTS
+      // ===============================
+      React.useEffect(function () {
+        fetch("http://localhost:8080/airports")
+          .then(function (res) {
+            return res.json();
+          })
+          .then(function (result) {
+            var list = result && result.data ? result.data : [];
+
+            var normalized = list.map(function (a) {
+              return {
+                id: a.ID,
+                name: a.Name
+              };
+            });
+
+            setAirports(normalized);
+          })
+          .catch(function (err) {
+            console.error("Airport fetch error:", err);
+            setAirports([]);
+          });
+      }, []);
+
+      // ===============================
+      // ON AIRPORT CHANGE
+      // ===============================
+      function onAirportChange(airportId) {
+        setSelectedAirport(airportId);
+
+        if (!airportId) {
+          setReport([]);
+          return;
+        }
+
+        setLoading(true);
+
+        fetch(
+          "http://localhost:8080/reports/airport-dependency?airport_id=" +
+            airportId
+        )
+          .then(function (res) {
+            return res.json();
+          })
+          .then(function (data) {
+            setReport(Array.isArray(data) ? data : []);
+            setLoading(false);
+          })
+          .catch(function (err) {
+            console.error("Report error:", err);
+            setReport([]);
+            setLoading(false);
+          });
+      }
+
+      // ===============================
+      // RENDER
+      // ===============================
+      return (
+        <div className="w-full max-w-xl p-8 bg-white/10 rounded-xl backdrop-blur-lg shadow-xl">
+
+          <h1 className="text-2xl font-bold mb-6 text-center text-purple-300">
+            Airport Airline Dependency Index
+          </h1>
+
+          {/* Airport Select */}
+          <select
+            className="w-full p-3 rounded bg-slate-800 border border-purple-500 mb-6"
+            value={selectedAirport}
+            onChange={function (e) {
+              onAirportChange(e.target.value);
+            }}
+          >
+            <option value="">-- Choose Airport --</option>
+            {airports.map(function (a) {
+              return (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              );
+            })}
+          </select>
+
+          {/* Loading */}
+          {loading && (
+            <div className="text-center text-purple-300">
+              Loading dependency report...
+            </div>
+          )}
+
+          {/* Report */}
+          {!loading && report.length > 0 && (
+            <div className="space-y-3">
+              {report.map(function (row, index) {
+                return (
+                  <div
+                    key={index}
+                    className="p-4 bg-slate-800 rounded-lg flex justify-between items-center"
+                  >
+                    <span>{row.company_name}</span>
+                    <span className="text-purple-400 font-bold">
+                      Count : {row.flight_count}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+
+</body>
+</html>
