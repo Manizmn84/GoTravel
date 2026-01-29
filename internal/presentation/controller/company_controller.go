@@ -74,3 +74,23 @@ func (h *CompanyController) List(c echo.Context) error {
 		"data": airlines,
 	})
 }
+
+func (c *CompanyController) GetCompanyAirports(ctx echo.Context) error {
+	companyID, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, echo.Map{
+			"message": "invalid company id",
+		})
+	}
+
+	data, err := c.companyService.GetCompanyAirports(uint(companyID))
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"data": data,
+	})
+}

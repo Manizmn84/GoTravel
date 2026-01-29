@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Company Airports</title>
+
+  <!-- React -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #2a2f6f, #3a1c71);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #f1f1f1;
+    }
+
+    .glass {
+      width: 900px;
+      background: rgba(20, 20, 40, 0.55);
+      backdrop-filter: blur(14px);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    h1 {
+      margin-bottom: 24px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      margin-bottom: 24px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    option {
+      background: #1f1c2c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 14px;
+      text-align: left;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .code {
+      color: #4dd8ff;
+      font-weight: 600;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 24px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+  const { useEffect, useState } = React;
+
+  function App() {
+    const [companies, setCompanies] = useState([]);
+    const [companyId, setCompanyId] = useState("");
+    const [airports, setAirports] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    // ✅ Load & normalize companies
+    useEffect(() => {
+      fetch("http://localhost:8080/companies")
+        .then(res => res.json())
+        .then(json => {
+          const normalized = (json.data || []).map(c => ({
+            id: c.ID,
+            name: c.Name
+          }));
+          setCompanies(normalized);
+        })
+        .catch(err => console.error(err));
+    }, []);
+
+    const onCompanyChange = async (e) => {
+      const id = e.target.value;
+      setCompanyId(id);
+      setAirports([]);
+
+      if (!id) return;
+
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `http://localhost:8080/companies/${id}/airports`
+        );
+        const json = await res.json();
+        setAirports(json.data || []);
+      } catch (err) {
+        console.error(err);
+        alert("Failed to load airports");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+      <div className="glass">
+        <h1>Company Airports</h1>
+
+        <select value={companyId} onChange={onCompanyChange}>
+          <option value="">Select Company</option>
+          {companies.map(c => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
+        {loading && <div className="empty">Loading...</div>}
+
+        {!loading && companyId && airports.length === 0 && (
+          <div className="empty">No airports found</div>
+        )}
+
+        {!loading && airports.length > 0 && (
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>City</th>
+                <th>Country</th>
+                <th>IATA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {airports.map(a => (
+                <tr key={a.id}>
+                  <td>{a.name}</td>
+                  <td>{a.city}</td>
+                  <td>{a.country}</td>
+                  <td className="code">{a.iata_code}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    );
+  }
+
+  ReactDOM
+    .createRoot(document.getElementById("root"))
+    .render(<App />);
+</script>
+</body>
+</html>
