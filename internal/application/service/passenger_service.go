@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
+	"github.com/Manizmn84/GoTravel/internal/domain/enum"
 	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
 )
 
@@ -24,4 +25,8 @@ func (s *PassengerService) List() ([]*entity.Passenger, error) {
 	}
 
 	return passengers, nil
+}
+
+func (s *PassengerService) GetPassengersByGender(gender enum.Gender) ([]entity.Passenger, error) {
+	return s.passengerRepository.ListByGender(gender)
 }

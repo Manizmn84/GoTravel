@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Passenger & Reserves</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React 16 -->
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+  <!-- Babel -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+    body {
+      background: radial-gradient(circle at top, #0f172a, #020617);
+      min-height: 100vh;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  function PassengerReserveList() {
+
+    const [gender, setGender] = React.useState("");
+    const [passengers, setPassengers] = React.useState([]);
+    const [loading, setLoading] = React.useState(false);
+
+    function loadPassengers(g) {
+      if (!g) return;
+
+      setLoading(true);
+      fetch("http://localhost:8080/passengersGender?gender=" + g)
+        .then(res => res.json())
+        .then(json => {
+          const data = json.data || [];
+
+          // normalize backend keys (ID -> id)
+          const normalized = data.map(p => ({
+            id: p.ID,
+            firstName: p.FirstName,
+            lastName: p.LastName,
+            email: p.Email,
+            gender: p.Gender,
+            phone: p.Phone,
+            nationalCode: p.NationalCode,
+            reserves: (p.Reserves || []).map(r => ({
+              id: r.ID,
+              totalAmount: r.TotalAmount
+            }))
+          }));
+
+          setPassengers(normalized);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setPassengers([]);
+          setLoading(false);
+        });
+    }
+
+    function onGenderChange(e) {
+      const g = e.target.value;
+      setGender(g);
+      loadPassengers(g);
+    }
+
+    return (
+      <div className="w-full max-w-6xl bg-white/10 backdrop-blur-xl rounded-xl shadow-xl p-8">
+        <h1 className="text-3xl font-bold text-sky-300 text-center mb-8">
+          Passenger List (with Reserves)
+        </h1>
+
+        {/* Gender Select */}
+        <div className="flex justify-center mb-6">
+          <select
+            className="bg-white/10 border border-sky-500 text-white px-4 py-2 rounded-md focus:ring-2 focus:ring-sky-300"
+            value={gender}
+            onChange={onGenderChange}
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Unknown">Unknown</option>
+          </select>
+        </div>
+
+        {/* Loading */}
+        {loading && (
+          <div className="text-center text-sky-300">Loading...</div>
+        )}
+
+        {/* Table */}
+        {!loading && passengers.length > 0 && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-sky-500 text-sky-300">
+                  <th className="p-3 text-left">#</th>
+                  <th className="p-3 text-left">Full Name</th>
+                  <th className="p-3 text-left">Email</th>
+                  <th className="p-3 text-left">Phone</th>
+                  <th className="p-3 text-left">National Code</th>
+                  <th className="p-3 text-left">Reserves</th>
+                </tr>
+              </thead>
+              <tbody>
+                {passengers.map((p, index) => (
+                  <tr key={p.id} className="border-b border-white/10 hover:bg-white/5">
+                    <td className="p-3">{index + 1}</td>
+                    <td className="p-3">
+                      {p.firstName} {p.lastName}
+                    </td>
+                    <td className="p-3 text-sky-200">{p.email}</td>
+                    <td className="p-3">{p.phone}</td>
+                    <td className="p-3">{p.nationalCode}</td>
+                    <td className="p-3">
+                      {p.reserves.length > 0 ? (
+                        p.reserves.map(r => (
+                          <div key={r.id} className="text-emerald-300">
+                            Reserve #{r.id} – ${r.totalAmount}
+                          </div>
+                        ))
+                      ) : (
+                        <span className="text-slate-400 italic">No reserves</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Empty */}
+        {!loading && gender && passengers.length === 0 && (
+          <div className="text-center text-slate-400 mt-4">
+            No passengers found for "{gender}"
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  ReactDOM.render(<PassengerReserveList />, document.getElementById("root"));
+</script>
+
+</body>
+</html>

@@ -2,6 +2,7 @@ package postgress
 
 import (
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
+	"github.com/Manizmn84/GoTravel/internal/domain/enum"
 	"gorm.io/gorm"
 )
 
@@ -31,4 +32,15 @@ func (r *PassengerRepository) List() ([]*entity.Passenger, error) {
 	}
 
 	return passengers, nil
+}
+
+func (r *PassengerRepository) ListByGender(gender enum.Gender) ([]entity.Passenger, error) {
+	var passengers []entity.Passenger
+
+	err := r.db.
+		Preload("Reserves").
+		Where("gender = ?", gender).
+		Find(&passengers).Error
+
+	return passengers, err
 }

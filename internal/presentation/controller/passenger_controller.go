@@ -7,6 +7,7 @@ import (
 
 	"github.com/Manizmn84/GoTravel/internal/application/service"
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
+	"github.com/Manizmn84/GoTravel/internal/domain/enum"
 )
 
 type PassengerController struct {
@@ -52,6 +53,31 @@ func (c *PassengerController) List(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(200, echo.Map{
+		"data": passengers,
+	})
+}
+
+func (c *PassengerController) ListByGender(cxt echo.Context) error {
+	genderStr := cxt.QueryParam("gender")
+
+	var gender enum.Gender
+	switch genderStr {
+	case "Male":
+		gender = enum.GenderMale
+	case "Female":
+		gender = enum.GenderFemale
+	default:
+		gender = enum.GenderUnknown
+	}
+
+	passengers, err := c.passengerService.GetPassengersByGender(gender)
+	if err != nil {
+		return cxt.JSON(http.StatusInternalServerError, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return cxt.JSON(http.StatusOK, echo.Map{
 		"data": passengers,
 	})
 }
