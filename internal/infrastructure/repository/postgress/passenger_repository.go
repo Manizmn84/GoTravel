@@ -3,6 +3,7 @@ package postgress
 import (
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/Manizmn84/GoTravel/internal/domain/enum"
+	"github.com/Manizmn84/GoTravel/internal/model"
 	"gorm.io/gorm"
 )
 
@@ -43,4 +44,30 @@ func (r *PassengerRepository) ListByGender(gender enum.Gender) ([]entity.Passeng
 		Find(&passengers).Error
 
 	return passengers, err
+}
+
+func (r *PassengerRepository) FindByPaymentStatus(
+	status enum.PaymentStatus,
+) ([]model.PassengerPaymentSummaryDTO, error) {
+
+	var result []model.PassengerPaymentSummaryDTO
+
+	err := r.db.
+		Table("passengers p").
+		Select(`
+			p.id as passenger_id,
+			p.first_name,
+			p.last_name,
+			p.email,
+			p.gender,
+			SUM(r.total_amount) as total_amount
+		`).
+		Joins("JOIN reserves r ON r.passenger_id = p.id").
+		Joins("JOIN payments pay ON pay.reserve_id = r.id").
+		Where("pay.status = ?", status).
+		Group("p.id, p.first_name, p.last_name, p.email, p.gender").
+		Having("SUM(r.total_amount) > 0").
+		Scan(&result).Error
+
+	return result, err
 }
