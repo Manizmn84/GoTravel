@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Passenger Payment Report</title>
+
+  <!-- React -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* ===== Global ===== */
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #1f1c2c, #2a2f6f, #3a1c71);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #f1f1f1;
+    }
+
+    /* ===== Glass Card ===== */
+    .glass {
+      width: 950px;
+      background: rgba(20, 20, 40, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    h1 {
+      margin: 0 0 24px 0;
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== Select ===== */
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.35);
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 24px;
+    }
+
+    select option {
+      background: #1f1c2c;
+      color: #fff;
+    }
+
+    /* ===== Table ===== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 14px;
+      text-align: left;
+      font-weight: 500;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    /* ===== Amount ===== */
+    .amount {
+      font-weight: 600;
+      color: #4dd8ff;
+    }
+
+    /* ===== Empty / Loading ===== */
+    .empty {
+      text-align: center;
+      padding: 24px;
+      opacity: 0.75;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [status, setStatus] = useState("");
+      const [passengers, setPassengers] = useState([]);
+      const [loading, setLoading] = useState(false);
+
+      const fetchPassengers = async (paymentStatus) => {
+        if (!paymentStatus) return;
+
+        setLoading(true);
+        try {
+          const res = await fetch(
+            `http://localhost:8080/passengers/by-payment?status=${paymentStatus}`
+          );
+          const json = await res.json();
+          setPassengers(json.data || []);
+        } catch (err) {
+          console.error(err);
+          alert("Failed to fetch data");
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const onStatusChange = (e) => {
+        const value = e.target.value;
+        setStatus(value);
+        fetchPassengers(value);
+      };
+
+      return (
+        <div className="glass">
+          <h1>Passenger Payment Report</h1>
+
+          <select value={status} onChange={onStatusChange}>
+            <option value="">Select Payment Status</option>
+            <option value="Paid">Paid</option>
+            <option value="NotPaid">Not Paid</option>
+          </select>
+
+          {loading && <div className="empty">Loading...</div>}
+
+          {!loading && status && passengers.length === 0 && (
+            <div className="empty">No passengers found</div>
+          )}
+
+          {!loading && passengers.length > 0 && (
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Gender</th>
+                  <th>Total Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {passengers.map((p) => (
+                  <tr key={p.passenger_id}>
+                    <td>{p.first_name} {p.last_name}</td>
+                    <td>{p.email}</td>
+                    <td>{p.gender === 1 ? "Male" : "Female"}</td>
+                    <td className="amount">
+                      {p.total_amount.toLocaleString()} $
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
