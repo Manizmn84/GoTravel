@@ -29,11 +29,14 @@ func (com *CompanyService) CreateCompany(company *entity.Company) error {
 	return nil
 }
 
-// internal/report/service/airline_flights.go
 func (s *CompanyService) AirlineFlightCount(airlineID uint) (*model.AirlineFlightCount, error) {
 	return s.companyRepository.AirlineFlightCount(airlineID)
 }
 
 func (s *CompanyService) List() ([]entity.Company, error) {
 	return s.companyRepository.List()
+}
+
+func (s *CompanyService) GetCompanyAirports(companyID uint) ([]model.CompanyAirportDTO, error) {
+	return s.companyRepository.GetAirportsByCompany(companyID)
 }

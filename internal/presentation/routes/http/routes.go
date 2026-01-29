@@ -55,6 +55,7 @@ func NewRouter(
 	e.GET("/companies", companyController.List)
 	e.GET("/passengersGender", passengerController.ListByGender)
 	e.GET("/passengers/by-payment", passengerController.GetByPaymentStatus)
+	e.GET("/companies/:id/airports", companyController.GetCompanyAirports)
 
 	return &Router{
 		Echo: e,

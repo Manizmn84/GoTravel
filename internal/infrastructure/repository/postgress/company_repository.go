@@ -58,3 +58,31 @@ func (r *CompanyRepository) List() ([]entity.Company, error) {
 
 	return airlines, nil
 }
+
+func (r *CompanyRepository) GetAirportsByCompany(companyID uint) ([]model.CompanyAirportDTO, error) {
+	var airports []model.CompanyAirportDTO
+
+	err := r.db.
+		Table("airports a").
+		Select(`
+			DISTINCT a.id,
+			a.name,
+			a.city,
+			a.country,
+			a.lata_code as iata_code
+		`).
+		Joins(`
+			JOIN routes r 
+			  ON r.origin_id = a.id OR r.destination_id = a.id
+		`).
+		Joins(`
+			JOIN trip_routes tr ON tr.route_id = r.id
+		`).
+		Joins(`
+			JOIN trips t ON t.id = tr.trip_id
+		`).
+		Where("t.company_id = ?", companyID).
+		Scan(&airports).Error
+
+	return airports, err
+}
