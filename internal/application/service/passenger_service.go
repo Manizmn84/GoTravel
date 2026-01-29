@@ -4,6 +4,7 @@ import (
 	"github.com/Manizmn84/GoTravel/internal/domain/entity"
 	"github.com/Manizmn84/GoTravel/internal/domain/enum"
 	"github.com/Manizmn84/GoTravel/internal/infrastructure/repository/postgress"
+	"github.com/Manizmn84/GoTravel/internal/model"
 )
 
 type PassengerService struct {
@@ -29,4 +30,11 @@ func (s *PassengerService) List() ([]*entity.Passenger, error) {
 
 func (s *PassengerService) GetPassengersByGender(gender enum.Gender) ([]entity.Passenger, error) {
 	return s.passengerRepository.ListByGender(gender)
+}
+
+func (s *PassengerService) GetPassengersByPaymentStatus(
+	status enum.PaymentStatus,
+) ([]model.PassengerPaymentSummaryDTO, error) {
+
+	return s.passengerRepository.FindByPaymentStatus(status)
 }

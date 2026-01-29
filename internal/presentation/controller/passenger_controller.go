@@ -81,3 +81,30 @@ func (c *PassengerController) ListByGender(cxt echo.Context) error {
 		"data": passengers,
 	})
 }
+
+func (c *PassengerController) GetByPaymentStatus(ctx echo.Context) error {
+	statusParam := ctx.QueryParam("status")
+
+	var status enum.PaymentStatus
+	switch statusParam {
+	case "Paid":
+		status = enum.PayPaid
+	case "NotPaid":
+		status = enum.PayNotPaid
+	default:
+		return ctx.JSON(http.StatusBadRequest, echo.Map{
+			"message": "invalid payment status",
+		})
+	}
+
+	data, err := c.passengerService.GetPassengersByPaymentStatus(status)
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, echo.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"data": data,
+	})
+}
