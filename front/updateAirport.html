@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <title>Update Airport</title>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 70px auto;
+      padding: 30px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    select, input, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+    }
+
+    button {
+      background: #00c6ff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #00aaff;
+    }
+
+    .msg {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .success { color: #4dff88; }
+    .error { color: #ff4d4d; }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+function UpdateAirport() {
+  const [airports, setAirports] = React.useState([]);
+  const [selected, setSelected] = React.useState(null);
+  const [form, setForm] = React.useState({
+    Name: "",
+    Country: "",
+    City: "",
+    LATA_Code: ""
+  });
+  const [msg, setMsg] = React.useState("");
+  const [isError, setIsError] = React.useState(false);
+
+  React.useEffect(() => {
+    fetch("http://localhost:8080/airports")
+  .then(res => res.json())
+  .then(res => {
+    const normalized = res.data.map(a => ({
+      id: a.ID,
+      name: a.Name,
+      Country: a.Country,
+      City: a.City,
+      LATA_Code: a.LATA_Code
+    }));
+
+    setAirports(normalized);
+  });
+  }, []);
+
+  const selectAirport = (e) => {
+    const id = Number(e.target.value);
+    const air = airports.find(a => a.id === id);
+    setSelected(air);
+
+    setForm({
+      Name: air.name,
+      Country: air.Country,
+      City: air.City,
+      LATA_Code: air.LATA_Code
+    });
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const update = async () => {
+  try {
+    const res = await fetch(
+      `http://localhost:8080/UpdateAirport/${selected.id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setIsError(true);
+      setMsg(data.error);
+    } else {
+      setIsError(false);
+      setMsg("✅ Airport updated successfully");
+    }
+  } catch (err) {
+    setIsError(true);
+    setMsg("❌ Server not reachable");
+  }
+};
+
+
+  return (
+    <div className="container">
+      <h2>Update Airport</h2>
+
+      <select onChange={selectAirport}>
+        <option value="">Select Airport</option>
+        {airports.map(a => (
+          <option key={a.id} value={a.id}>
+            {a.name}
+          </option>
+        ))}
+      </select>
+
+      {selected && (
+      <React.Fragment>
+        <input name="Name" value={form.Name} onChange={handleChange} />
+        <input name="Country" value={form.Country} onChange={handleChange} />
+        <input name="City" value={form.City} onChange={handleChange} />
+        <input name="LATA_Code" value={form.LATA_Code} onChange={handleChange} />
+
+        <button onClick={update}>Update</button>
+      </React.Fragment>
+    )}
+
+
+      {msg && (
+        <div className={`msg ${isError ? "error" : "success"}`}>
+          {msg}
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root"))
+  .render(<UpdateAirport />);
+</script>
+
+</body>
+</html>

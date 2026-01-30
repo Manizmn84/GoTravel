@@ -67,3 +67,16 @@ func (s *AirportService) AirportRouteList(airportID uint) ([]model.AirportRouteI
 func (s *AirportService) GetAirportDependency(airportID uint) ([]model.AirportDependencyReport, error) {
 	return s.airportRepository.AirportDependency(airportID)
 }
+
+func (s *AirportService) DeleteAirport(id uint) error {
+	exist, err := s.airportRepository.ExistByID(id)
+	if err != nil {
+		return err
+	}
+
+	if !exist {
+		return errors.New("airport not found")
+	}
+
+	return s.airportRepository.DeleteByID(id)
+}

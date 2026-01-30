@@ -56,6 +56,7 @@ func NewRouter(
 	e.GET("/passengersGender", passengerController.ListByGender)
 	e.GET("/passengers/by-payment", passengerController.GetByPaymentStatus)
 	e.GET("/companies/:id/airports", companyController.GetCompanyAirports)
+	e.DELETE("/DeleteAirport/:id", airportController.DeleteAirport)
 
 	return &Router{
 		Echo: e,

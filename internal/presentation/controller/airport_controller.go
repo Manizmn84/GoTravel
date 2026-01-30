@@ -150,3 +150,25 @@ func (c *AirportController) AirportDependency(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusOK, result)
 }
+
+func (c *AirportController) DeleteAirport(ctx echo.Context) error {
+	idParam := ctx.Param("id")
+
+	id, err := strconv.ParseUint(idParam, 10, 32)
+	if err != nil {
+		return ctx.JSON(http.StatusBadRequest, echo.Map{
+			"error": "invalid airport id",
+		})
+	}
+
+	err = c.airPortService.DeleteAirport(uint(id))
+	if err != nil {
+		return ctx.JSON(http.StatusNotFound, echo.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return ctx.JSON(http.StatusOK, echo.Map{
+		"message": "airport deleted successfully",
+	})
+}

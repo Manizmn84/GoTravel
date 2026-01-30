@@ -150,3 +150,22 @@ func (r *AirportRepository) AirportDependency(airportID uint) ([]model.AirportDe
 
 	return result, err
 }
+
+func (r *AirportRepository) ExistByID(id uint) (bool, error) {
+	var count int64
+	err := r.db.Model(&entity.Airport{}).
+		Where("id = ?", id).
+		Count(&count).Error
+
+	return count > 0, err
+}
+
+func (r *AirportRepository) DeleteByID(id uint) error {
+	result := r.db.Delete(&entity.Airport{}, id)
+
+	if result.RowsAffected == 0 {
+		return errors.New("airport not found")
+	}
+
+	return result.Error
+}
