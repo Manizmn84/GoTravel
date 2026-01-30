@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel</title>
+
+  <!-- React & Babel CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    .container {
+      padding: 40px;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(14px);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .section-title {
+      margin: 30px 0 15px;
+      font-size: 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .card h3 {
+      margin: 0 0 10px 0;
+    }
+
+    .card p {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  function Card(props) {
+    return (
+      <div className="card" onClick={props.onClick}>
+        <h3>{props.title}</h3>
+        <p>{props.desc}</p>
+      </div>
+    );
+  }
+
+  function App() {
+    function go(page) {
+      window.location.href = page;
+    }
+
+    return (
+      <div className="container">
+        <div className="glass">
+          <h1>✈️ Admin Panel</h1>
+
+          {/* Airports */}
+          <div className="section-title">Airports</div>
+          <div className="grid">
+            <Card title="Airports List" desc="View all airports"
+              onClick={function () { go("airports.html"); }} />
+
+            <Card title="Create Airport" desc="Add new airport"
+              onClick={function () { go("createAirport.html"); }} />
+
+            <Card title="Update Airport" desc="Edit airport info"
+              onClick={function () { go("updateAirport.html"); }} />
+
+            <Card title="Delete Airport" desc="Remove airport"
+              onClick={function () { go("deleteAirport.html"); }} />
+
+            <Card title="Airport Routes" desc="View airport routes"
+              onClick={function () { go("airportRoutes.html"); }} />
+
+            <Card title="Routes Count" desc="Incoming / Outgoing count"
+              onClick={function () { go("airportRoutesCount.html"); }} />
+          </div>
+
+          {/* Passengers */}
+          <div className="section-title">Passengers</div>
+          <div className="grid">
+            <Card title="Passengers List" desc="All passengers"
+              onClick={function () { go("passengers.html"); }} />
+
+            <Card title="Passenger by Gender" desc="Gender based report"
+              onClick={function () { go("passengerByGender.html"); }} />
+
+            <Card title="Payment Status" desc="Paid / Not Paid report"
+              onClick={function () { go("paymentStatus.html"); }} />
+          </div>
+
+          {/* Companies */}
+          <div className="section-title">Companies & Airlines</div>
+          <div className="grid">
+            <Card title="Companies List" desc="All companies"
+              onClick={function () { go("companies.html"); }} />
+
+            <Card title="Company Airline Count" desc="Airline count report"
+              onClick={function () { go("companyAirlineCount.html"); }} />
+
+            <Card title="Company Airports" desc="Airports by company"
+              onClick={function () { go("companyAirport.html"); }} />
+
+            <Card title="Dependency Report" desc="Dependency ratio"
+              onClick={function () { go("dependency.html"); }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Delete Airport</title>
+
+  <!-- React & Babel CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+    body {
+      background: #0f2027;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: Arial, sans-serif;
+      color: #fff;
+      padding: 40px;
+    }
+
+    .glass {
+      max-width: 900px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      text-align: center;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #ff4d4d;
+      color: white;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #ff1a1a;
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  function App() {
+    const [airports, setAirports] = React.useState([]);
+
+    // Load airports
+    React.useEffect(function () {
+      fetch("http://localhost:8080/airports")
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (res) {
+          const normalized = res.data.map(function (a) {
+            return {
+              id: a.ID,
+              name: a.Name,
+              country: a.Country,
+              city: a.City,
+              lata: a.LATA_Code
+            };
+          });
+
+          setAirports(normalized);
+        })
+        .catch(function (err) {
+          console.error(err);
+        });
+    }, []);
+
+    function deleteAirport(id) {
+      const ok = window.confirm("Are you sure you want to delete this airport?");
+      if (!ok) return;
+
+      fetch("http://localhost:8080/DeleteAirport/" + id, {
+        method: "DELETE"
+      })
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function () {
+          setAirports(function (prev) {
+            return prev.filter(function (a) {
+              return a.id !== id;
+            });
+          });
+        })
+        .catch(function (err) {
+          console.error(err);
+        });
+    }
+
+    return (
+      <div className="glass">
+        <h2>Delete Airport</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Country</th>
+              <th>City</th>
+              <th>LATA</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {airports.map(function (a) {
+              return (
+                <tr key={a.id}>
+                  <td>{a.id}</td>
+                  <td>{a.name}</td>
+                  <td>{a.country}</td>
+                  <td>{a.city}</td>
+                  <td>{a.lata}</td>
+                  <td>
+                    <button onClick={function () { deleteAirport(a.id); }}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        {airports.length === 0 && (
+          <p style={{ marginTop: "20px", textAlign: "center" }}>
+            No airports found
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+</body>
+</html>

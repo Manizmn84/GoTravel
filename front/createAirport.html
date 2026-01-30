@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <title>Create Airport</title>
+
+  <!-- React -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 80px auto;
+      padding: 30px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12pxc5364);
+      font-family: sans-serif;
+      color: #fff;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 80px auto;
+      padding: 30px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      background: #00c6ff;
+      color: #000;
+    }
+
+    button:hover {
+      background: #00aaff;
+    }
+
+    .msg {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .error {
+      color: #ff4d4d;
+    }
+
+    .success {
+      color: #4dff88;
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+  function CreateAirport() {
+    const [form, setForm] = React.useState({
+      Name: "",
+      Country: "",
+      City: "",
+      LATA_Code: ""
+    });
+
+    const [message, setMessage] = React.useState("");
+    const [isError, setIsError] = React.useState(false);
+
+    const handleChange = (e) => {
+      setForm({
+        ...form,
+        [e.target.name]: e.target.value
+      });
+    };
+
+    const submit = async () => {
+      setMessage("");
+
+      try {
+        const res = await fetch("http://localhost:8080/CreateAirport", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(form)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          setIsError(true);
+          setMessage(data.error || "Error");
+        } else {
+          setIsError(false);
+          setMessage("✅ Airport created successfully");
+          setForm({
+            Name: "",
+            Country: "",
+            City: "",
+            LATA_Code: ""
+          });
+        }
+      } catch (err) {
+        setIsError(true);
+        setMessage("❌ Server not reachable");
+      }
+    };
+
+    return (
+      <div className="container">
+        <h2>Create Airport</h2>
+
+        <input
+          name="Name"
+          placeholder="Airport Name"
+          value={form.Name}
+          onChange={handleChange}
+        />
+
+        <input
+          name="Country"
+          placeholder="Country"
+          value={form.Country}
+          onChange={handleChange}
+        />
+
+        <input
+          name="City"
+          placeholder="City"
+          value={form.City}
+          onChange={handleChange}
+        />
+
+        <input
+          name="LATA_Code"
+          placeholder="LATA Code"
+          value={form.LATA_Code}
+          onChange={handleChange}
+        />
+
+        <button onClick={submit}>Create</button>
+
+        {message && (
+          <div className={`msg ${isError ? "error" : "success"}`}>
+            {message}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root"))
+    .render(<CreateAirport />);
+</script>
+
+</body>
+</html>
